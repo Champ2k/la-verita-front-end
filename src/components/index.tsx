@@ -1,3 +1,4 @@
 export {
     Table
-} from './table/Table'
+} from './table/Table';
+export type { VaccineData } from './table/Table';

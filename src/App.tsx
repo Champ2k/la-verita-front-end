@@ -1,4 +1,4 @@
-import _ from "lodash"
+import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Table } from "./components";
@@ -21,7 +21,8 @@ function App() {
   const [result, setResult] = useState<resultData>();
   const [inputWord, setInputWord] = useState<string>("");
   const [activeHeader, setActiveHeader] = useState<number>(0);
-  const [commentList, setCommentList] = useState<string>("");
+  const [filterVaccine, setFilterVaccine] = useState<string>();
+  const [commentList, setCommentList] = useState<string[]>();
 
   const getData = async (inputWord: string) => {
     try {
@@ -43,15 +44,14 @@ function App() {
         }
       );
       const res = await axios.get(`http://127.0.0.1:5000/tweets?${query}`);
-      console.log(`http://127.0.0.1:5000/tweets?${query}`)
       return res.data;
     } catch (error) {
       console.log(error);
     }
   };
 
-  const fetchData = async () => {
-    let response = await getData(inputWord);
+  const fetchData = async (inputText:string) => {
+    const response = await getData(inputText);
     setResult(response);
   };
 
@@ -62,30 +62,41 @@ function App() {
   const handleSelected = (e: any, index?: number) => {
     if (index) {
       setActiveHeader(index);
+      setFilterVaccine(exVacList[index]);
+    } else {
+      setActiveHeader(0);
+      setFilterVaccine(exVacList[0]);
     }
-    return e.target.innerText;
   };
 
-  const fetchAllTweetsData = async () => {
-    let response = await getTweetsData();
+  const handleSelectedComment = (text: string) => {
+    setInputWord(text);
+    fetchData(text);
   };
 
-  const fetchSpecificTag = async (limit?:number, hashtag?:string) => {
-    let response = await getTweetsData(limit && limit, hashtag && hashtag);
-    console.log(response)
+  const fetchSpecificTag = async (limit?: number, hashtag?: string) => {
+    const response = await getTweetsData(limit && limit, hashtag && hashtag);
+    const getComment = _.map(response.tweets, (item) => {
+      return item.comment;
+    });
+    setCommentList(getComment);
+    return response;
   };
 
   useEffect(() => {
-    fetchAllTweetsData()
-    fetchSpecificTag(0,"Moderna")
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (filterVaccine) {
+      fetchSpecificTag(0, filterVaccine);
+    } else {
+      fetchSpecificTag(0, exVacList[0]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeHeader]);
 
   return (
     <>
       <div>
         <input onChange={(e) => handleInput(e)} />
-        <button type="button" onClick={() => fetchData()}>
+        <button type="button" onClick={() => fetchData(inputWord)}>
           Submit
         </button>
         <div>{result?.inputword}</div>
@@ -96,7 +107,9 @@ function App() {
         <Table
           header={exVacList}
           activeHeader={activeHeader}
+          data={commentList}
           onClick={(e, index) => handleSelected(e, index)}
+          onSelectText={(text) => handleSelectedComment(text)}
         />
       </div>
     </>
