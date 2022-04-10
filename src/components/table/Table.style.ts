@@ -4,31 +4,40 @@ export const Container = styled.div`
   position: relative;
   width: 100%;
   overflow: hidden;
-  max-width: 750px;
+  margin: auto;
+  overflow: hidden;
+  /* display: flex; */
+  display: grid;
+  grid-template-columns: 1fr 5fr;
 `;
 
 export const HeaderContainer = styled.div`
   display: flex;
   align-items: center;
-  padding: 16px 16px;
-  justify-content: center;
+  flex-direction: column;
+  /* justify-content: center; */
 `;
 export const Header = styled.div<{ isActive: boolean }>`
-  border-bottom: 1px solid black;
-  padding: 16px 16px;
-  background-color: #f0f8ff;
+  border-right: 2px solid #f0ffff;
+  padding: 16px 0px;
+  background-color: #37434e;
+  width: 100%;
+  text-align: center;
+  color: white;
   cursor: pointer;
 
   :hover {
     background-color: #f0ffff;
-    border-bottom: 1px solid transparent;
+    color: black;
+    border-right: 2px solid #5ac77d;
   }
 
   ${(props) =>
     props.isActive &&
     css`
-      background-color: #f0ffff;
-      border-bottom: 1px solid transparent;
+      background-color: #d0ecd0;
+      border-right: 2px solid #5ac77d;
+      color: black;
     `}
 `;
 
@@ -37,21 +46,31 @@ export const BodyContainer = styled.div`
   align-items: flex-start;
   flex-direction: column;
   max-width: 100%;
-  overflow: hidden;
+  /* overflow: auto; */
   position: relative;
+  /* max-height: 500px; */
 `;
 
 export const BodyText = styled.div`
-  margin: 6px;
-  overflow: hidden;
+  padding: 8px;
+  /* overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 1; /* number of lines to show */
-  line-clamp: 1;
-  -webkit-box-orient: vertical;
+  /* line-clamp: 1;
+  -webkit-box-orient: vertical;  */
+  color: white;
+  :not(:last-child) {
+    border-bottom: 1px solid black;
+  }
+
   cursor: pointer;
 
   :hover {
-    color: red;
+    color: #d0ecd0;
+
+    :not(:last-child) {
+      border-bottom: 1px solid #d0ecd0;
+    }
   }
 `;

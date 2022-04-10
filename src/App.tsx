@@ -1,8 +1,22 @@
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Table } from "./components";
+import { Table, PercentageBar, Loading } from "./components";
 import qs from "query-string";
+// import Logo from "../public/Laverita_logo.png"
+
+import {
+  BodyContainer,
+  Container,
+  BackgroundContainer,
+  InputContainer,
+  Input,
+  Button,
+  ButtonContainer,
+  Navbar,
+  ImageContainer,
+  LogoImage,
+} from "./App.style";
 
 const exVacList = ["Moderna", "Pfizer", "AstraZeneca", "Sinopharm", "Sinovac"];
 
@@ -17,6 +31,8 @@ function App() {
     result: string;
     sentiment: sentiment;
   }
+
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [result, setResult] = useState<resultData>();
   const [inputWord, setInputWord] = useState<string>("");
@@ -50,7 +66,7 @@ function App() {
     }
   };
 
-  const fetchData = async (inputText:string) => {
+  const fetchData = async (inputText: string) => {
     const response = await getData(inputText);
     setResult(response);
   };
@@ -72,6 +88,7 @@ function App() {
   const handleSelectedComment = (text: string) => {
     setInputWord(text);
     fetchData(text);
+    setLoading(true);
   };
 
   const fetchSpecificTag = async (limit?: number, hashtag?: string) => {
@@ -92,27 +109,86 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeHeader]);
 
+  useEffect(() => {
+    if (result) {
+      setLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result]);
+
   return (
-    <>
+    <BodyContainer>
       <div>
-        <input onChange={(e) => handleInput(e)} />
-        <button type="button" onClick={() => fetchData(inputWord)}>
-          Submit
-        </button>
-        <div>{result?.inputword}</div>
-        <div>{result?.result}</div>
-        <div>{result?.sentiment.negative}</div>
-        <div>{result?.sentiment.neutral}</div>
-        <div>{result?.sentiment.positive}</div>
-        <Table
-          header={exVacList}
-          activeHeader={activeHeader}
-          data={commentList}
-          onClick={(e, index) => handleSelected(e, index)}
-          onSelectText={(text) => handleSelectedComment(text)}
-        />
+        <Navbar>
+          <ImageContainer>
+            <LogoImage
+              src="https://media.discordapp.net/attachments/783609265117069322/958600564634185729/Laverita_logo.png"
+              alt="logo"
+            />
+          </ImageContainer>
+        </Navbar>
+        <Container>
+          <BackgroundContainer />
+          <InputContainer>
+            <Input onChange={(e) => handleInput(e)} />
+            <ButtonContainer>
+              <Button
+                type="button"
+                onClick={() => {
+                  fetchData(inputWord);
+                  setLoading(true);
+                }}
+              >
+                Analyze
+              </Button>
+            </ButtonContainer>
+          </InputContainer>
+        </Container>
+        <div
+          style={{
+            width: "80%",
+            margin: "auto",
+            marginTop: 50,
+            marginBottom: 50,
+          }}
+        >
+          {loading ? (
+            <Loading />
+          ) : (
+            <PercentageBar
+              positive={{
+                size: result?.sentiment.positive
+                  ? parseFloat(result?.sentiment.positive)
+                  : 0,
+                color: "#4EB502",
+              }}
+              negative={{
+                size: result?.sentiment.negative
+                  ? parseFloat(result?.sentiment.negative)
+                  : 0,
+                color: "#F05827",
+              }}
+              neutral={{
+                size: result?.sentiment.neutral
+                  ? parseFloat(result?.sentiment.neutral)
+                  : 0,
+                color: "#FAB404",
+              }}
+            />
+          )}
+          <div>{inputWord && inputWord}</div>
+        </div>
+        <div style={{ backgroundColor: "#18191a" }}>
+          <Table
+            header={exVacList}
+            activeHeader={activeHeader}
+            data={commentList}
+            onClick={(e, index) => handleSelected(e, index)}
+            onSelectText={(text) => handleSelectedComment(text)}
+          />
+        </div>
       </div>
-    </>
+    </BodyContainer>
   );
 }
 
