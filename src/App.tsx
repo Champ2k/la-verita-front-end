@@ -1,7 +1,13 @@
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Table, PercentageBar, Loading } from "./components";
+import {
+  Table,
+  PercentageBar,
+  Loading,
+  CountBox,
+  VaccineData,
+} from "./components";
 import qs from "query-string";
 // import Logo from "../public/Laverita_logo.png"
 
@@ -32,13 +38,23 @@ function App() {
     sentiment: sentiment;
   }
 
+  interface overallSentimentData {
+    countNegative: number;
+    countNeutral: number;
+    countPositive: number;
+    countTweet: number;
+    hashtag: string;
+  }
+
   const [loading, setLoading] = useState<boolean>(false);
 
   const [result, setResult] = useState<resultData>();
   const [inputWord, setInputWord] = useState<string>("");
   const [activeHeader, setActiveHeader] = useState<number>(0);
   const [filterVaccine, setFilterVaccine] = useState<string>();
-  const [commentList, setCommentList] = useState<string[]>();
+  const [commentList, setCommentList] = useState<VaccineData[]>();
+  const [overallSentiment, setOverallSentiment] =
+    useState<overallSentimentData>();
 
   const getData = async (inputWord: string) => {
     try {
@@ -60,6 +76,18 @@ function App() {
         }
       );
       const res = await axios.get(`http://127.0.0.1:5000/tweets?${query}`);
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getOverallSentiment = async (hashtag?: string) => {
+    try {
+      const query = qs.stringify({ hashtag: hashtag }, { skipNull: true });
+      const res = await axios.get(
+        `http://127.0.0.1:5000/overallSentiment?${query}`
+      );
       return res.data;
     } catch (error) {
       console.log(error);
@@ -94,10 +122,15 @@ function App() {
   const fetchSpecificTag = async (limit?: number, hashtag?: string) => {
     const response = await getTweetsData(limit && limit, hashtag && hashtag);
     const getComment = _.map(response.tweets, (item) => {
-      return item.comment;
+      return { comment: item.comment, sentiment: item.sentiment };
     });
     setCommentList(getComment);
     return response;
+  };
+
+  const fetchOverallSentiment = async (hashtag?: string) => {
+    const response = await getOverallSentiment(hashtag && hashtag);
+    setOverallSentiment(response);
   };
 
   useEffect(() => {
@@ -116,21 +149,32 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result]);
 
+  // useEffect(() => {
+  //   fetchOverallSentiment();
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
+
+  console.log(Boolean(inputWord));
+
   return (
     <BodyContainer>
       <div>
         <Navbar>
-          <ImageContainer>
+          {/* <ImageContainer>
             <LogoImage
               src="https://media.discordapp.net/attachments/783609265117069322/958600564634185729/Laverita_logo.png"
               alt="logo"
             />
-          </ImageContainer>
+          </ImageContainer> */}
+          <div style={{ color: "#ffffff", margin: "auto 0", padding: "16px" }}>
+            La Verita
+          </div>
         </Navbar>
         <Container>
+          <CountBox />
           <BackgroundContainer />
           <InputContainer>
-            <Input onChange={(e) => handleInput(e)} />
+            <Input onChange={(e) => handleInput(e)} value={inputWord} />
             <ButtonContainer>
               <Button
                 type="button"
@@ -138,6 +182,7 @@ function App() {
                   fetchData(inputWord);
                   setLoading(true);
                 }}
+                disable={!Boolean(inputWord)}
               >
                 Analyze
               </Button>
@@ -176,7 +221,7 @@ function App() {
               }}
             />
           )}
-          <div>{inputWord && inputWord}</div>
+          {/* <div>{inputWord && inputWord}</div> */}
         </div>
         <div style={{ backgroundColor: "#18191a" }}>
           <Table

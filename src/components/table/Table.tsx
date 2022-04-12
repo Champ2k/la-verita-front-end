@@ -4,16 +4,20 @@ import {
   Header,
   BodyContainer,
   BodyText,
+  Dot,
 } from "./Table.style";
 
+export type Sentiment = "negative" | "positive" | "neutral";
+
 export type VaccineData = {
-  comment?: string;
+  comment: string;
+  sentiment: Sentiment;
 };
 
 interface TableData {
   header?: string[];
   activeHeader?: number;
-  data?: string[];
+  data?: VaccineData[];
   onClick?: (e?: any, index?: number) => void;
   onSelectText?: (text: string) => void;
 }
@@ -39,10 +43,12 @@ export const Table = (props: TableData) => {
         {data &&
           data.map((item, index) => (
             <BodyText
-              onClick={() => onSelectText && onSelectText(item)}
+              onClick={() => onSelectText && onSelectText(item.comment)}
+              sentiment={item.sentiment}
               key={`comment-text-${index + 1}`}
             >
-              {item}
+              <Dot sentiment={item.sentiment} />
+              {item.comment}
             </BodyText>
           ))}
       </BodyContainer>

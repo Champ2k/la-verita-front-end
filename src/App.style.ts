@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 export const BodyContainer = styled.div``;
 
@@ -14,7 +14,7 @@ export const Navbar = styled.div`
   display: flex;
   width: 100%;
   height: 60px;
-  background: #f4ffff;
+  background: #000000;
 `;
 
 export const ImageContainer = styled.div`
@@ -57,16 +57,23 @@ export const InputContainer = styled.div`
   align-items: center;
 `;
 
-export const Input = styled.input`
+export const Input = styled.textarea`
   width: 100%;
   height: 40px;
   padding: 8px;
-  padding-right: 25%;
+  padding-right: 18%;
   border-radius: 8px;
   border: 0;
   background-color: #ffffff;
   box-shadow: 0px 0px 1px 1px rgb(0, 0, 0.3);
   font-size: 16px;
+  resize: none;
+  font-family: inherit;
+  line-height: 150%;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 export const ButtonContainer = styled.div`
@@ -74,13 +81,21 @@ export const ButtonContainer = styled.div`
   right: 2%;
 `;
 
-export const Button = styled.button`
+export const Button = styled.button<{ disable: boolean }>`
   cursor: pointer;
   border-radius: 8px;
   background-color: #367cff;
   color: #ffffff;
   padding: 12px 16px;
   border: 0;
+
+  ${(props) =>
+    props.disable &&
+    css`
+      background-color: #cccccc;
+      color: #666666;
+      pointer-events: none;
+    `}
 
   &:hover {
     background-color: #346cff;

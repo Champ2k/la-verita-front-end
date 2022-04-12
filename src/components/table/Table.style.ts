@@ -1,4 +1,5 @@
 import styled, { css } from "styled-components";
+import { Sentiment } from "./Table";
 
 export const Container = styled.div`
   position: relative;
@@ -51,7 +52,7 @@ export const BodyContainer = styled.div`
   /* max-height: 500px; */
 `;
 
-export const BodyText = styled.div`
+export const BodyText = styled.div<{ sentiment: Sentiment }>`
   padding: 8px;
   /* overflow: hidden;
   text-overflow: ellipsis;
@@ -59,6 +60,9 @@ export const BodyText = styled.div`
   -webkit-line-clamp: 1; /* number of lines to show */
   /* line-clamp: 1;
   -webkit-box-orient: vertical;  */
+  display: flex;
+  align-items: center;
+
   color: white;
   :not(:last-child) {
     border-bottom: 1px solid black;
@@ -67,10 +71,42 @@ export const BodyText = styled.div`
   cursor: pointer;
 
   :hover {
-    color: #d0ecd0;
+    color: ${(props) => {
+      if (props.sentiment.toLowerCase() === "negative") {
+        return "#ecd0d0";
+      } else if (props.sentiment.toLowerCase() === "neutral") {
+        return "#e2d6b7";
+      } else if (props.sentiment.toLowerCase() === "positive") {
+        return "#d0ecd0";
+      }
+    }};;
+
 
     :not(:last-child) {
-      border-bottom: 1px solid #d0ecd0;
+      border-bottom: 1px solid ${(props) => {
+        if (props.sentiment.toLowerCase() === "negative") {
+          return "#ecd0d0";
+        } else if (props.sentiment.toLowerCase() === "neutral") {
+          return "#e2d6b7";
+        } else if (props.sentiment.toLowerCase() === "positive") {
+          return "#d0ecd0";
+        }
+      }}
+`;
+
+export const Dot = styled.div<{ sentiment: Sentiment }>`
+  border-radius: 100%;
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  margin-right: 6px;
+  background-color: ${(props) => {
+    if (props.sentiment.toLowerCase() === "negative") {
+      return "#F05827";
+    } else if (props.sentiment.toLowerCase() === "neutral") {
+      return "#FAB404";
+    } else if (props.sentiment.toLowerCase() === "positive") {
+      return "#4EB502";
     }
-  }
+  }};
 `;
