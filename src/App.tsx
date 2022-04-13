@@ -24,7 +24,7 @@ import {
   LogoImage,
 } from "./App.style";
 
-const exVacList = ["Moderna", "Pfizer", "AstraZeneca", "Sinopharm", "Sinovac"];
+const exVacList = ["All", "Moderna", "Pfizer", "AstraZeneca", "Sinopharm", "Sinovac"];
 
 function App() {
   type sentiment = {
@@ -56,7 +56,7 @@ function App() {
   const [overallSentiment, setOverallSentiment] =
     useState<overallSentimentData>();
 
-  const getData = async (inputWord: string) => {
+  const getAnalysis = async (inputWord: string) => {
     try {
       const res = await axios.get(
         `http://127.0.0.1:5000/analysis?inputword=${inputWord}`
@@ -95,7 +95,7 @@ function App() {
   };
 
   const fetchData = async (inputText: string) => {
-    const response = await getData(inputText);
+    const response = await getAnalysis(inputText);
     setResult(response);
   };
 
@@ -107,9 +107,11 @@ function App() {
     if (index) {
       setActiveHeader(index);
       setFilterVaccine(exVacList[index]);
+      fetchOverallSentiment(exVacList[index])
     } else {
       setActiveHeader(0);
-      setFilterVaccine(exVacList[0]);
+      setFilterVaccine("");
+      fetchOverallSentiment("")
     }
   };
 
@@ -125,7 +127,7 @@ function App() {
       return { comment: item.comment, sentiment: item.sentiment };
     });
     setCommentList(getComment);
-    return response;
+    return getComment;
   };
 
   const fetchOverallSentiment = async (hashtag?: string) => {
@@ -133,11 +135,21 @@ function App() {
     setOverallSentiment(response);
   };
 
+  const handleSortBySentiment = async (sentiment?: string, hashtag?: string) => {
+    const response = await getTweetsData(0, hashtag && hashtag);
+    const getSortedComment = _.filter(response.tweets, {
+      sentiment: sentiment,
+    });
+    setCommentList(getSortedComment);
+    return getSortedComment;
+  };
+
   useEffect(() => {
     if (filterVaccine) {
       fetchSpecificTag(0, filterVaccine);
     } else {
-      fetchSpecificTag(0, exVacList[0]);
+      fetchSpecificTag(0, "");
+      fetchOverallSentiment();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeHeader]);
@@ -148,13 +160,6 @@ function App() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result]);
-
-  // useEffect(() => {
-  //   fetchOverallSentiment();
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
-  console.log(Boolean(inputWord));
 
   return (
     <BodyContainer>
@@ -171,7 +176,6 @@ function App() {
           </div>
         </Navbar>
         <Container>
-          <CountBox />
           <BackgroundContainer />
           <InputContainer>
             <Input onChange={(e) => handleInput(e)} value={inputWord} />
@@ -222,6 +226,13 @@ function App() {
             />
           )}
           {/* <div>{inputWord && inputWord}</div> */}
+        </div>
+        <div style={{ margin: "auto", maxWidth: 523, marginBottom: "24px" }}>
+          <CountBox
+            data={overallSentiment}
+            column={3}
+            onClick={(sentiment) => handleSortBySentiment(sentiment, filterVaccine)}
+          />
         </div>
         <div style={{ backgroundColor: "#18191a" }}>
           <Table
