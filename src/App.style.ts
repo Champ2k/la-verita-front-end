@@ -1,5 +1,11 @@
 import styled, { css } from "styled-components";
 
+export const Image = styled.img`
+  position: relative;
+  width: 100%;
+  height: 100%;
+`;
+
 export const BodyContainer = styled.div``;
 
 export const Container = styled.div`

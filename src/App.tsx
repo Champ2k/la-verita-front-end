@@ -22,6 +22,7 @@ import {
   Navbar,
   ImageContainer,
   LogoImage,
+  Image,
 } from "./App.style";
 
 const exVacList = ["All", "Moderna", "Pfizer", "AstraZeneca", "Sinopharm", "Sinovac"];
@@ -226,6 +227,12 @@ function App() {
             />
           )}
           {/* <div>{inputWord && inputWord}</div> */}
+        </div>
+        <div style={{margin: 'auto', marginBottom: "24px", width: 1100, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gridGap: 16}}>
+          {/* <Image src='/images/all_word_cloud.png' alt=""/> */}
+          <Image src='/images/negative_cloud.png' alt=""/>
+          <Image src='/images/neutral_cloud.png' alt=""/>
+          <Image src='/images/positive_cloud.png' alt=""/>
         </div>
         <div style={{ margin: "auto", maxWidth: 523, marginBottom: "24px" }}>
           <CountBox
