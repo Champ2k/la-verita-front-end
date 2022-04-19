@@ -60,7 +60,7 @@ function App() {
   const getAnalysis = async (inputWord: string) => {
     try {
       const res = await axios.get(
-        `http://127.0.0.1:5000/analysis?inputword=${inputWord}`
+        `http://127.0.0.1:5000/analysis?inputword=${encodeURIComponent(inputWord)}`
       );
       return res.data;
     } catch (error) {
@@ -82,12 +82,13 @@ function App() {
       console.log(error);
     }
   };
+  // getTweetsData()
 
   const getOverallSentiment = async (hashtag?: string) => {
     try {
       const query = qs.stringify({ hashtag: hashtag }, { skipNull: true });
       const res = await axios.get(
-        `http://127.0.0.1:5000/overallSentiment?${query}`
+        `http://127.0.0.1:5000/getOverallSentiment?${query}`
       );
       return res.data;
     } catch (error) {
@@ -133,7 +134,14 @@ function App() {
 
   const fetchOverallSentiment = async (hashtag?: string) => {
     const response = await getOverallSentiment(hashtag && hashtag);
-    setOverallSentiment(response);
+    const objJson = {
+      "countNegative": response[0].countNegative,
+      "countNeutral":response[0].countNeutral,
+      "countPositive":response[0].countPositive,
+      "countTweet":response[0].countTweet,
+      "hashtag":response[0].hashtag,
+    }
+    setOverallSentiment(objJson);
   };
 
   const handleSortBySentiment = async (sentiment?: string, hashtag?: string) => {

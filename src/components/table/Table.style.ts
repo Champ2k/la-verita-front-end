@@ -10,6 +10,7 @@ export const Container = styled.div`
   /* display: flex; */
   display: grid;
   grid-template-columns: 1fr 5fr;
+  padding-bottom: 24px;
 `;
 
 export const HeaderContainer = styled.div`
@@ -47,9 +48,11 @@ export const BodyContainer = styled.div`
   align-items: flex-start;
   flex-direction: column;
   max-width: 100%;
-  /* overflow: auto; */
   position: relative;
-  /* max-height: 500px; */
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 500px;
+  padding-left: 1px;
 `;
 
 export const BodyText = styled.div<{ sentiment: Sentiment }>`
@@ -68,6 +71,11 @@ export const BodyText = styled.div<{ sentiment: Sentiment }>`
     border-bottom: 1px solid black;
   }
 
+  :nth-last-child(2) {
+    margin-bottom: 4px;
+    border-bottom: 0;
+  }
+
   cursor: pointer;
 
   :hover {
@@ -79,19 +87,25 @@ export const BodyText = styled.div<{ sentiment: Sentiment }>`
       } else if (props.sentiment.toLowerCase() === "positive") {
         return "#d0ecd0";
       }
-    }};;
-
+    }};
 
     :not(:last-child) {
-      border-bottom: 1px solid ${(props) => {
-        if (props.sentiment.toLowerCase() === "negative") {
-          return "#ecd0d0";
-        } else if (props.sentiment.toLowerCase() === "neutral") {
-          return "#e2d6b7";
-        } else if (props.sentiment.toLowerCase() === "positive") {
-          return "#d0ecd0";
-        }
-      }}
+      border-bottom: 1px solid
+        ${(props) => {
+          if (props.sentiment.toLowerCase() === "negative") {
+            return "#ecd0d0";
+          } else if (props.sentiment.toLowerCase() === "neutral") {
+            return "#e2d6b7";
+          } else if (props.sentiment.toLowerCase() === "positive") {
+            return "#d0ecd0";
+          }
+        }};
+    }
+
+    :nth-last-child(2) {
+      border-bottom: 0;
+    }
+  }
 `;
 
 export const Dot = styled.div<{ sentiment: Sentiment }>`
@@ -109,4 +123,31 @@ export const Dot = styled.div<{ sentiment: Sentiment }>`
       return "#4EB502";
     }
   }};
+`;
+
+export const LoadMore = styled.div<{ disable: boolean }>`
+  color: black;
+  cursor: pointer;
+  padding: 16px;
+  text-align: center;
+  width: 50%;
+  background-color: #d7d7d7;
+  border-radius: 6px;
+  margin: auto;
+
+  :hover {
+    background-color: #cfd8d4;
+  }
+
+  :active {
+    background-color: #d7d7d7;
+  }
+
+  ${(props) =>
+    props.disable &&
+    css`
+      color: grey;
+      background-color: white;
+      pointer-events: none;
+    `}
 `;

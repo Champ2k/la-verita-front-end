@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   Container,
   HeaderContainer,
@@ -5,6 +6,7 @@ import {
   BodyContainer,
   BodyText,
   Dot,
+  LoadMore,
 } from "./Table.style";
 
 export type Sentiment = "negative" | "positive" | "neutral";
@@ -24,7 +26,17 @@ interface TableData {
 
 export const Table = (props: TableData) => {
   const { header, activeHeader, onClick, data, onSelectText } = props;
+  const [limit, setLimit] = useState<number>(100);
+  const handleLoadMore = () => {
+    setLimit(limit + 50);
+  };
 
+  useEffect(() => {
+    console.log(limit);
+    setLimit(100);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeHeader]);
+  
   return (
     <Container>
       <HeaderContainer>
@@ -41,7 +53,7 @@ export const Table = (props: TableData) => {
       </HeaderContainer>
       <BodyContainer>
         {data &&
-          data.map((item, index) => (
+          data.slice(0, limit).map((item, index) => (
             <BodyText
               onClick={() => onSelectText && onSelectText(item.comment)}
               sentiment={item.sentiment}
@@ -51,6 +63,14 @@ export const Table = (props: TableData) => {
               {item.comment}
             </BodyText>
           ))}
+        {data && (
+          <LoadMore
+            onClick={() => handleLoadMore()}
+            disable={Boolean(data.length <= limit)}
+          >
+            Load More
+          </LoadMore>
+        )}
       </BodyContainer>
     </Container>
   );
