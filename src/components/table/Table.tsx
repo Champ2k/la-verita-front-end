@@ -32,11 +32,10 @@ export const Table = (props: TableData) => {
   };
 
   useEffect(() => {
-    console.log(limit);
     setLimit(100);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeHeader]);
-  
+
   return (
     <Container>
       <HeaderContainer>

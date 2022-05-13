@@ -25,7 +25,14 @@ import {
   Image,
 } from "./App.style";
 
-const exVacList = ["All", "Moderna", "Pfizer", "AstraZeneca", "Sinopharm", "Sinovac"];
+const exVacList = [
+  "All",
+  "Moderna",
+  "Pfizer",
+  "AstraZeneca",
+  "Sinopharm",
+  "Sinovac",
+];
 
 function App() {
   type sentiment = {
@@ -60,7 +67,9 @@ function App() {
   const getAnalysis = async (inputWord: string) => {
     try {
       const res = await axios.get(
-        `http://127.0.0.1:5000/analysis?inputword=${encodeURIComponent(inputWord)}`
+        `http://127.0.0.1:5000/analysis?inputword=${encodeURIComponent(
+          inputWord
+        )}`
       );
       return res.data;
     } catch (error) {
@@ -109,11 +118,11 @@ function App() {
     if (index) {
       setActiveHeader(index);
       setFilterVaccine(exVacList[index]);
-      fetchOverallSentiment(exVacList[index])
+      fetchOverallSentiment(exVacList[index]);
     } else {
       setActiveHeader(0);
       setFilterVaccine("");
-      fetchOverallSentiment("")
+      fetchOverallSentiment("");
     }
   };
 
@@ -135,22 +144,30 @@ function App() {
   const fetchOverallSentiment = async (hashtag?: string) => {
     const response = await getOverallSentiment(hashtag && hashtag);
     const objJson = {
-      "countNegative": response[0].countNegative,
-      "countNeutral":response[0].countNeutral,
-      "countPositive":response[0].countPositive,
-      "countTweet":response[0].countTweet,
-      "hashtag":response[0].hashtag,
-    }
+      countNegative: response[0].countNegative,
+      countNeutral: response[0].countNeutral,
+      countPositive: response[0].countPositive,
+      countTweet: response[0].countTweet,
+      hashtag: response[0].hashtag,
+    };
     setOverallSentiment(objJson);
   };
 
-  const handleSortBySentiment = async (sentiment?: string, hashtag?: string) => {
+  const handleSortBySentiment = async (
+    sentiment?: string,
+    hashtag?: string
+  ) => {
     const response = await getTweetsData(0, hashtag && hashtag);
-    const getSortedComment = _.filter(response.tweets, {
-      sentiment: sentiment,
-    });
-    setCommentList(getSortedComment);
-    return getSortedComment;
+    if (sentiment) {
+      const getSortedComment = _.filter(response.tweets, {
+        sentiment: sentiment,
+      });
+      setCommentList(getSortedComment);
+      return getSortedComment;
+    } else {
+      setCommentList(response.tweets);
+      return response.tweets;
+    }
   };
 
   useEffect(() => {
@@ -236,17 +253,28 @@ function App() {
           )}
           {/* <div>{inputWord && inputWord}</div> */}
         </div>
-        <div style={{margin: 'auto', marginBottom: "24px", width: 1100, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gridGap: 16}}>
+        <div
+          style={{
+            margin: "auto",
+            marginBottom: "24px",
+            width: 1100,
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gridGap: 16,
+          }}
+        >
           {/* <Image src='/images/all_word_cloud.png' alt=""/> */}
-          <Image src='/images/negative_cloud.png' alt=""/>
-          <Image src='/images/neutral_cloud.png' alt=""/>
-          <Image src='/images/positive_cloud.png' alt=""/>
+          <Image src="/images/negative_cloud.png" alt="" />
+          <Image src="/images/neutral_cloud.png" alt="" />
+          <Image src="/images/positive_cloud.png" alt="" />
         </div>
-        <div style={{ margin: "auto", maxWidth: 523, marginBottom: "24px" }}>
+        <div style={{ margin: "auto", maxWidth: 700, marginBottom: "24px" }}>
           <CountBox
             data={overallSentiment}
-            column={3}
-            onClick={(sentiment) => handleSortBySentiment(sentiment, filterVaccine)}
+            column={4}
+            onClick={(sentiment) =>
+              handleSortBySentiment(sentiment, filterVaccine)
+            }
           />
         </div>
         <div style={{ backgroundColor: "#18191a" }}>

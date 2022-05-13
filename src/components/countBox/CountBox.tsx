@@ -23,9 +23,9 @@ export const CountBox = (props: CountBoxProps) => {
           .map((item, index) => (
             <Box
               key={`count-box-${index + 1}`}
-              onClick={() => onClick && onClick(item[0].replace("count", ""))}
+              onClick={() => onClick && onClick((index + 1) === column ? "" : item[0].replace("count", ""))}
             >
-              <Text>{item[0].replace("count", "")}</Text>
+              <Text>{(index + 1) === column ? "Total Tweets" : item[0].replace("count", "")}</Text>
               <br />
               <Text>{item[1]}</Text>
             </Box>
